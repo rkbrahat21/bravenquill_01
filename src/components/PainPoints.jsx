@@ -23,14 +23,14 @@ export default function PainPoints() {
 
   return (
     <section className="w-full bg-bloom py-24 md:py-32 px-6 border-t border-forest/5">
-      <div className="max-w-[1200px] mx-auto flex flex-col items-center text-center">
-        
+      <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+
         <AnimatedSection delay={0}>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold text-forest leading-[1.1] tracking-tight mb-6 max-w-4xl">
             Why Scaling with AI & Automation is <span className="text-emerald">Harder Than It Looks</span>
           </h2>
         </AnimatedSection>
-        
+
         <AnimatedSection delay={100}>
           <p className="text-lg md:text-xl text-forest/70 font-medium leading-relaxed max-w-3xl mb-16">
             As organisations scale, processes that once operated smoothly begin to stretch under increased demand. Manual efforts grow, complexity deepens, and what was once efficient becomes a bottleneck.

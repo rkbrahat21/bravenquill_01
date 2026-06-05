@@ -25,11 +25,11 @@ export default function Navbar() {
     <>
       <nav
         className={`w-full h-24 z-50 transition-all duration-500 ease-out ${isScrolled
-            ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-xl shadow-sm border-b border-forest/5'
-            : 'absolute top-0 left-0 bg-transparent border-b border-transparent'
+          ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-xl shadow-sm border-b border-forest/5'
+          : 'absolute top-0 left-0 bg-transparent border-b border-transparent'
           }`}
       >
-        <div className="max-w-[1600px] mx-auto px-6 md:px-12 h-full flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 h-full flex items-center justify-between">
 
           {/* Left: Logo + Text */}
           <Link to="/" className="flex items-center gap-3 group cursor-pointer z-50">

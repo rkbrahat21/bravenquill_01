@@ -31,8 +31,8 @@ export default function CaseStudies() {
 
   return (
     <section className="w-full bg-white py-24 md:py-32 px-6" id="testimonials">
-      <div className="max-w-[1200px] mx-auto flex flex-col items-center">
-        
+      <div className="max-w-300 mx-auto flex flex-col items-center">
+
         <AnimatedSection delay={0}>
           <div className="text-center mb-16">
             <h2 className="text-xs font-bold uppercase tracking-widest text-emerald mb-3">Real results from real businesses</h2>
@@ -67,12 +67,12 @@ export default function CaseStudies() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
           {cases.map((cs, idx) => (
             <AnimatedSection key={idx} delay={200 + (idx * 100)}>
-              <div className="flex flex-col h-full bg-bloom/20 border border-forest/10 rounded-[24px] p-8 hover:shadow-2xl hover:border-emerald/30 transition-all duration-300">
+              <div className="flex flex-col h-full bg-bloom/20 border border-forest/10 rounded-3xl p-8 hover:shadow-2xl hover:border-emerald/30 transition-all duration-300">
                 <h4 className="text-xl font-heading font-bold text-forest mb-6 leading-tight">
                   {cs.title}
                 </h4>
-                
-                <div className="flex flex-col gap-5 mb-8 flex-grow">
+
+                <div className="flex flex-col gap-5 mb-8 grow">
                   <div className="bg-red-50 p-4 rounded-xl border border-red-100">
                     <span className="text-[10px] font-bold text-red-800 uppercase tracking-wider mb-1 block">Before</span>
                     <p className="text-sm font-medium text-red-900">{cs.before}</p>
@@ -84,7 +84,7 @@ export default function CaseStudies() {
                 </div>
 
                 <div className="mt-auto border-t border-forest/10 pt-6 relative">
-                  <svg className="w-6 h-6 text-emerald/30 absolute top-4 left-0 -translate-y-1/2 -translate-x-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                  <svg className="w-6 h-6 text-emerald/30 absolute top-4 left-0 -translate-y-1/2 -translate-x-1" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
                   <p className="text-base text-forest/80 font-medium italic relative z-10 mb-4">"{cs.quote}"</p>
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-forest">{cs.name}</span>

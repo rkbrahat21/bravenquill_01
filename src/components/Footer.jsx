@@ -6,8 +6,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-forest text-white py-20 px-6 border-t-[1px] border-emerald/20 mt-auto relative z-10">
-      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8">
+    <footer className="w-full bg-forest text-white py-20 px-6 border-t border-emerald/20 mt-auto relative z-10">
+      <div className="max-w-300 mx-auto grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8">
 
         {/* Left Side: Brand & Links (Spans 7 columns on md) */}
         <div className="md:col-span-7 flex flex-col md:flex-row gap-16 justify-between">
@@ -67,7 +67,7 @@ export default function Footer() {
 
       </div>
 
-      <div className="max-w-[1200px] mx-auto mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="max-w-300 mx-auto mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
         <span className="font-ui text-xs text-celadon/40 tracking-wider">
           © {currentYear} Braven Quill. All rights reserved.
         </span>

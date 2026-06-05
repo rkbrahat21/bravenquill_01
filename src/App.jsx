@@ -33,7 +33,7 @@ export default function App() {
   return (
     <Router>
       <div className="min-h-screen text-black bg-white font-ui selection:bg-emerald/30 selection:text-forest overflow-x-hidden flex flex-col justify-between">
-        <div className="w-full flex-grow flex flex-col">
+        <div className="w-full grow flex flex-col">
           {/* 1. Navbar */}
           <Navbar />
 

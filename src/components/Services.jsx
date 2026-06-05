@@ -23,8 +23,8 @@ export default function Services() {
 
   return (
     <section className="w-full bg-white py-24 md:py-32 px-6" id="services">
-      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row gap-16 md:gap-24">
-        
+      <div className="max-w-300 mx-auto flex flex-col md:flex-row gap-16 md:gap-24">
+
         {/* Left: Sticky Header */}
         <div className="w-full md:w-1/3">
           <div className="sticky top-32 flex flex-col items-start">
@@ -45,7 +45,7 @@ export default function Services() {
         <div className="w-full md:w-2/3 flex flex-col gap-10 md:gap-12">
           {services.map((service, idx) => (
             <AnimatedSection key={idx} delay={idx * 100}>
-              <div className="flex flex-col bg-bloom/30 p-8 md:p-10 rounded-[32px] border border-emerald/10 hover:border-emerald/30 transition-colors duration-300">
+              <div className="flex flex-col bg-bloom/30 p-8 md:p-10 rounded-4xl border border-emerald/10 hover:border-emerald/30 transition-colors duration-300">
                 <h3 className="text-xl md:text-2xl font-heading font-bold text-forest mb-3">
                   {service.title}
                 </h3>

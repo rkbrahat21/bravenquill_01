@@ -31,8 +31,8 @@ export default function Process() {
 
   return (
     <section className="w-full bg-forest text-white py-24 md:py-32 px-6" id="how-we-work">
-      <div className="max-w-[1000px] mx-auto flex flex-col items-center">
-        
+      <div className="max-w-250 mx-auto flex flex-col items-center">
+
         <AnimatedSection delay={0}>
           <p className="text-lg md:text-xl text-celadon/90 font-medium leading-relaxed max-w-3xl text-center mb-20">
             A structured approach designed to help growing organisations implement AI and automation with clarity, confidence, and measurable ROI.
@@ -40,16 +40,16 @@ export default function Process() {
         </AnimatedSection>
 
         <div className="flex flex-col w-full relative">
-          
+
           {/* Vertical Track Line for Desktop */}
-          <div className="hidden md:block absolute left-[48px] top-0 bottom-0 w-[2px] bg-white/10"></div>
+          <div className="hidden md:block absolute left-12 top-0 bottom-0 w-0.5 bg-white/10"></div>
 
           {steps.map((step, idx) => (
             <AnimatedSection key={idx} delay={idx * 100}>
               <div className="flex flex-col md:flex-row gap-6 md:gap-12 mb-16 relative z-10 group">
-                
+
                 {/* Step Number & Circle */}
-                <div className="flex-shrink-0 flex items-center md:items-start gap-6">
+                <div className="shrink-0 flex items-center md:items-start gap-6">
                   <div className="w-24 h-24 md:w-24 md:h-24 rounded-full bg-forest border-4 border-emerald flex items-center justify-center relative shadow-[0_0_30px_rgba(31,130,85,0.2)] group-hover:bg-emerald group-hover:scale-110 transition-all duration-500">
                     <span className="text-3xl font-heading font-extrabold text-white">{step.num}</span>
                   </div>
@@ -73,7 +73,7 @@ export default function Process() {
               </div>
             </AnimatedSection>
           ))}
-          
+
         </div>
 
       </div>
