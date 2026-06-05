@@ -74,11 +74,11 @@ export default function CaseStudies() {
 
                 <div className="flex flex-col gap-5 mb-8 grow">
                   <div className="bg-red-50 p-4 rounded-xl border border-red-100">
-                    <span className="text-[10px] font-bold text-red-800 uppercase tracking-wider mb-1 block">Before</span>
+                    <span className="text-xs font-bold text-red-800 uppercase tracking-wider mb-1 block">Before</span>
                     <p className="text-sm font-medium text-red-900">{cs.before}</p>
                   </div>
                   <div className="bg-emerald/10 p-4 rounded-xl border border-emerald/20">
-                    <span className="text-[10px] font-bold text-emerald uppercase tracking-wider mb-1 block">After</span>
+                    <span className="text-xs font-bold text-emerald uppercase tracking-wider mb-1 block">After</span>
                     <p className="text-sm font-medium text-forest">{cs.after}</p>
                   </div>
                 </div>

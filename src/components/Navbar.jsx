@@ -24,10 +24,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`w-full h-24 z-50 transition-all duration-500 ease-out ${isScrolled
-          ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-xl shadow-sm border-b border-forest/5'
-          : 'absolute top-0 left-0 bg-transparent border-b border-transparent'
-          }`}
+        className={`w-full h-18 z-50 transition-all duration-500 ease-out fixed top-0 left-0 bg-white shadow-sm border-b border-forest/5`}
       >
         <div className="max-w-6xl mx-auto px-6 md:px-12 h-full flex items-center justify-between">
 
@@ -46,7 +43,7 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className="font-ui text-sm font-bold tracking-widest uppercase text-forest/80 hover:text-emerald transition-colors duration-300 relative group"
+                className="font-ui text-sm font-semibold tracking-md uppercase text-forest/80 hover:text-emerald transition-colors duration-300 relative group"
               >
                 {link.name}
                 <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-emerald transition-all duration-300 group-hover:w-full"></span>
