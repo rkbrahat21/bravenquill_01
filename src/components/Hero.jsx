@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
-export default function AutomalyHero() {
+export default function Hero() {
   return (
     <section className="w-full bg-white pt-32 pb-16 relative overflow-hidden">
       

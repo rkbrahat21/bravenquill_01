@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
-export default function AutomalyCaseStudies() {
+export default function CaseStudies() {
   const cases = [
     {
       title: "RevOps transformation built the engine that led to acquisition",

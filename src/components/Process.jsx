@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
-export default function AutomalyProcess() {
+export default function Process() {
   const steps = [
     {
       num: "01",

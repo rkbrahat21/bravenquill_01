@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
-export default function AutomalyServices() {
+export default function Services() {
   const services = [
     {
       title: "Enhance Your CRM with AI-Powered Automations",

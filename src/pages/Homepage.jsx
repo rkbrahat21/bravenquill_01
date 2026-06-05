@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 
-// New Automaly Architecture Components
-import AutomalyHero from '../components/AutomalyHero';
-import AutomalyPainPoints from '../components/AutomalyPainPoints';
-import AutomalyServices from '../components/AutomalyServices';
-import AutomalyProcess from '../components/AutomalyProcess';
-import AutomalyCaseStudies from '../components/AutomalyCaseStudies';
-import AutomalyCTA from '../components/AutomalyCTA';
+// Core Components
+import Hero from '../components/Hero';
+import PainPoints from '../components/PainPoints';
+import Services from '../components/Services';
+import Process from '../components/Process';
+import CaseStudies from '../components/CaseStudies';
+import CTA from '../components/CTA';
 
 export default function Homepage() {
   // Scroll to top on mount
@@ -16,12 +16,12 @@ export default function Homepage() {
 
   return (
     <main className="w-full flex flex-col font-ui">
-      <AutomalyHero />
-      <AutomalyPainPoints />
-      <AutomalyServices />
-      <AutomalyProcess />
-      <AutomalyCaseStudies />
-      <AutomalyCTA />
+      <Hero />
+      <PainPoints />
+      <Services />
+      <Process />
+      <CaseStudies />
+      <CTA />
     </main>
   );
 }

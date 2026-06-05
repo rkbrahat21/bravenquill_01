@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
-export default function AutomalyCTA() {
+export default function CTA() {
   return (
     <section className="w-full bg-forest text-white py-24 md:py-32 px-6">
       <div className="max-w-[1000px] mx-auto flex flex-col items-center text-center">

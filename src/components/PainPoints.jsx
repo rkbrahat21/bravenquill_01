@@ -1,7 +1,7 @@
 import React from 'react';
 import AnimatedSection from './AnimatedSection';
 
-export default function AutomalyPainPoints() {
+export default function PainPoints() {
   const painPoints = [
     {
       title: "Foundations Under Strain",
