@@ -8,7 +8,7 @@ import n8nLogo from '../assets/images/n8n.svg';
 
 export default function Hero() {
   return (
-    <section className="w-full text-forest pt-20 md:32 pb-20 relative overflow-hidden flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-bloom/20 via-white to-emerald/10">
+    <section className="w-full text-forest pt-20 md:32 pb-20 relative overflow-hidden flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-bloom/20 via-white to-emerald/10">
 
       {/* Background Subtle Gradients/Glows */}
       <div className="absolute w-screen inset-0 pointer-events-none overflow-hidden flex items-center justify-center">

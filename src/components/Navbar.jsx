@@ -24,7 +24,11 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`w-full h-18 z-50 transition-all duration-500 ease-out fixed top-0 left-0 bg-white shadow-sm border-b border-forest/5`}
+        className={`w-full h-18 z-50 transition-all duration-500 ease-out fixed top-0 left-0 border-b ${
+          isScrolled 
+            ? 'bg-white/85 backdrop-blur-lg shadow-sm border-forest/10' 
+            : 'bg-white/50 backdrop-blur-md border-white/20'
+        }`}
       >
         <div className="max-w-6xl mx-auto px-6 md:px-12 h-full flex items-center justify-between">
 
