@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Homepage from './pages/Homepage';
-import Aboutpage from './pages/Aboutpage';
-import Contactpage from './pages/Contactpage';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 
@@ -42,8 +40,6 @@ export default function App() {
           {/* 2. Routes (Pages) */}
           <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="/about-us" element={<Aboutpage />} />
-            <Route path="/contact-us" element={<Contactpage />} />
           </Routes>
         </div>
 

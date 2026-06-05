@@ -24,14 +24,13 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`w-full h-24 z-50 transition-all duration-500 ease-out ${
-          isScrolled
+        className={`w-full h-24 z-50 transition-all duration-500 ease-out ${isScrolled
             ? 'fixed top-0 left-0 bg-white/95 backdrop-blur-xl shadow-sm border-b border-forest/5'
             : 'absolute top-0 left-0 bg-transparent border-b border-transparent'
-        }`}
+          }`}
       >
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 h-full flex items-center justify-between">
-          
+
           {/* Left: Logo + Text */}
           <Link to="/" className="flex items-center gap-3 group cursor-pointer z-50">
             <img
@@ -39,7 +38,6 @@ export default function Navbar() {
               alt="Braven Quill Logo"
               className="h-8 md:h-10 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
             />
-            <span className="font-heading font-extrabold text-xl md:text-2xl text-forest tracking-tight">BRAVEN QUILL</span>
           </Link>
 
           {/* Center: Nav Links (Desktop) */}
@@ -82,9 +80,8 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-white/95 backdrop-blur-3xl z-40 flex flex-col justify-center px-8 transition-all duration-500 md:hidden ${
-          isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
-        }`}
+        className={`fixed inset-0 bg-white/95 backdrop-blur-3xl z-40 flex flex-col justify-center px-8 transition-all duration-500 md:hidden ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'
+          }`}
       >
         <div className="flex flex-col gap-8 items-center">
           {navLinks.map((link) => (
