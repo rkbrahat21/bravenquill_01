@@ -22,7 +22,7 @@ export default function Services() {
   ];
 
   return (
-    <section className="w-full bg-white py-24 md:py-32 px-6" id="services">
+    <section className="w-full bg-white px-6" id="services">
       <div className="max-w-300 mx-auto flex flex-col md:flex-row gap-16 md:gap-24">
 
         {/* Left: Sticky Header */}

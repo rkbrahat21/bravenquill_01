@@ -10,14 +10,14 @@ import n8nLogo from '../assets/images/n8n.svg';
 export default function Hero() {
   return (
     <section
-      className="w-full text-forest pt-20 md:32 pb-20 relative overflow-hidden flex flex-col items-center justify-center min-h-screen bg-[#fafafa]"
+      className="w-full text-forest pt-20 md:32 pb-4 relative overflow-hidden flex flex-col items-center justify-center min-h-screen bg-[#fafafa]"
     >
       {/* Aurora Sequence-Style Vertical Stripes Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-80 top-0 left-0">
         <div className="absolute -top-[10%] -left-[10%] blur-[100px] w-[400px] h-[400px] bg-[#A5EBCB] rounded-full animate-pulse" style={{ animationDuration: '7s' }}></div>
         <div className="absolute -top-[20%] -right-[10%] blur-[100px] w-[400px] h-[400px] bg-[#A5EBCB] rounded-full animate-pulse" style={{ animationDuration: '10s', animationDelay: '4s' }}></div>
         <div className="absolute bottom-[20%] left-[20%] blur-[100px] w-[150px] h-[150px] bg-[#5ABF92] rounded-full animate-pulse" style={{ animationDuration: '8s', animationDelay: '2s' }}></div>
-        <div className="absolute bottom-[20%] right-[15%] blur-[100px] w-[150px] h-[150px] bg-[#5ABF92] rounded-full animate-pulse" style={{ animationDuration: '8s', animationDelay: '2s' }}></div>
+        <div className="absolute bottom-[20%] right-[15%] blur-[100px] w-[150px] h-[100px] bg-[#5ABF92] rounded-full animate-pulse" style={{ animationDuration: '8s', animationDelay: '2s' }}></div>
       </div>
       <div className="max-w-5xl mx-auto px-6 relative z-10 flex flex-col items-center text-center mt-12">
 

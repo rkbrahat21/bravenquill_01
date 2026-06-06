@@ -23,11 +23,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        className={`z-50 transition-all duration-500 ease-out p-2 fixed w-[98%] mt-4 ml-4 mr-4 rounded-full ${isScrolled
-          ? 'bg-bloom/60 backdrop-blur-lg shadow-sm border-forest/10'
-          : 'bg-transparent'
-          }`}>
+      <nav className={`w-full h-18 z-50 transition-all duration-500 ease-out p-2 bg-transparent`}>
         <div className="max-w-full mx-auto px-6 md:px-12 h-full flex items-center justify-between">
 
           {/* Left: Logo + Text */}

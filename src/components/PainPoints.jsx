@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
 import AnimatedSection from './AnimatedSection';
 
 export default function PainPoints() {
@@ -47,195 +46,270 @@ export default function PainPoints() {
   ];
 
   const targetRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef
-  });
-
-  const [maxSlide, setMaxSlide] = useState(0);
-  const trackRef = useRef(null);
-
-  useEffect(() => {
-    const calculateSlide = () => {
-      if (trackRef.current) {
-        const scrollWidth = trackRef.current.scrollWidth;
-        const clientWidth = window.innerWidth;
-        setMaxSlide(Math.max(0, scrollWidth - clientWidth));
-      }
-    };
-
-    calculateSlide();
-    window.addEventListener('resize', calculateSlide);
-    const timer = setTimeout(calculateSlide, 200);
-
-    return () => {
-      window.removeEventListener('resize', calculateSlide);
-      clearTimeout(timer);
-    };
-  }, [painPoints.length]);
-
   const totalCards = painPoints.length;
-  const x = useTransform(scrollYProgress, [0, 1], [0, -maxSlide]);
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
-  const cardIndexRef = useRef(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const isTransitioningRef = useRef(false);
+  const touchStartYRef = useRef(0);
+  const isLockedRef = useRef(false);
 
-  // Sync scroll position changes from regular scrolls to keep the index updated
+  // Sync scroll progress bar with active index
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      if (!isTransitioningRef.current) {
-        const index = Math.round(latest * (totalCards - 1));
-        cardIndexRef.current = index;
-      }
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress, totalCards]);
+    setScrollProgress(activeIndex / (totalCards - 1));
+  }, [activeIndex, totalCards]);
 
   useEffect(() => {
     const el = targetRef.current;
     if (!el) return;
 
-    const handleWheel = (e) => {
+    const handleScroll = () => {
+      if (!window.lenis || isLockedRef.current) return;
+
       const rect = el.getBoundingClientRect();
-      // Section is pinned if top is near top of screen and bottom is near bottom of screen
-      const isPinned = rect.top <= 5 && rect.bottom >= window.innerHeight - 5;
-
-      if (!isPinned) return;
-
-      const direction = e.deltaY > 0 ? 1 : -1;
-      const nextIndex = cardIndexRef.current + direction;
-
-      // Allow natural scroll to proceed past the ends
-      if (nextIndex < 0 || nextIndex >= totalCards) {
-        return;
+      
+      // If the section top is centered in the viewport
+      if (rect.top > -100 && rect.top < 100) {
+        // Lock scroll and snap align
+        isLockedRef.current = true;
+        window.lenis.stop();
+        
+        const offsetTop = window.scrollY + rect.top;
+        window.lenis.scrollTo(offsetTop, { 
+          duration: 0.3, 
+          onComplete: () => {
+            if (window.lenis) window.lenis.stop();
+          }
+        });
+        
+        // Determine starting card index: Card 0 if entering from bottom (scrolling down),
+        // or Card 3 if entering from top (scrolling up)
+        const isScrollingDown = rect.top > 0;
+        const startIndex = isScrollingDown ? 0 : totalCards - 1;
+        setActiveIndex(startIndex);
       }
+    };
 
-      // Intercept the scroll event
+    const handleWheel = (e) => {
+      if (!isLockedRef.current) return;
+
+      // Intercept scroll event to lock the page
       e.preventDefault();
 
       if (isTransitioningRef.current) return;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const nextIndex = activeIndex + direction;
+
+      // Allow natural scroll at the boundaries
+      if (nextIndex < 0 && direction === -1) {
+        isLockedRef.current = false;
+        if (window.lenis) window.lenis.start();
+        return;
+      }
+
+      if (nextIndex >= totalCards && direction === 1) {
+        isLockedRef.current = false;
+        if (window.lenis) window.lenis.start();
+        return;
+      }
+
+      // Lock cooldown (1.1 seconds) to swallow scroll inertia completely
       isTransitioningRef.current = true;
-      cardIndexRef.current = nextIndex;
 
-      const offsetTop = el.offsetTop;
-      const viewportHeight = window.innerHeight;
-      const totalScrollable = (4.5 - 1) * viewportHeight;
-      const targetScroll = offsetTop + (nextIndex / (totalCards - 1)) * totalScrollable;
-
+      // Re-align to viewport top in case of shifts
+      const rect = el.getBoundingClientRect();
+      const offsetTop = window.scrollY + rect.top;
       if (window.lenis) {
-        window.lenis.scrollTo(targetScroll, {
-          duration: 0.95,
-          immediate: false,
-          force: true,
-          onComplete: () => {
-            setTimeout(() => {
-              isTransitioningRef.current = false;
-            }, 150);
-          }
-        });
-      } else {
-        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+        window.lenis.scrollTo(offsetTop, { duration: 0.3 });
+      }
+
+      setActiveIndex(nextIndex);
+
+      setTimeout(() => {
+        isTransitioningRef.current = false;
+      }, 1100);
+    };
+
+    const handleTouchStart = (e) => {
+      touchStartYRef.current = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isLockedRef.current) return;
+
+      const touchEndY = e.touches[0].clientY;
+      const diffY = touchStartYRef.current - touchEndY;
+
+      // Swipe threshold of 45px
+      if (Math.abs(diffY) > 45) {
+        const direction = diffY > 0 ? 1 : -1;
+        const nextIndex = activeIndex + direction;
+
+        if (nextIndex < 0 && direction === -1) {
+          isLockedRef.current = false;
+          if (window.lenis) window.lenis.start();
+          return;
+        }
+
+        if (nextIndex >= totalCards && direction === 1) {
+          isLockedRef.current = false;
+          if (window.lenis) window.lenis.start();
+          return;
+        }
+
+        // Block mobile native scroll
+        e.preventDefault();
+
+        if (isTransitioningRef.current) return;
+        isTransitioningRef.current = true;
+
+        // Snap to top
+        const rect = el.getBoundingClientRect();
+        const offsetTop = window.scrollY + rect.top;
+        if (window.lenis) {
+          window.lenis.scrollTo(offsetTop, { duration: 0.3 });
+        }
+
+        setActiveIndex(nextIndex);
+        touchStartYRef.current = touchEndY;
+
         setTimeout(() => {
           isTransitioningRef.current = false;
-        }, 850);
+        }, 1100);
       }
     };
 
+    window.addEventListener('scroll', handleScroll);
     el.addEventListener('wheel', handleWheel, { passive: false });
+    el.addEventListener('touchstart', handleTouchStart, { passive: true });
+    el.addEventListener('touchmove', handleTouchMove, { passive: false });
+
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       el.removeEventListener('wheel', handleWheel);
+      el.removeEventListener('touchstart', handleTouchStart);
+      el.removeEventListener('touchmove', handleTouchMove);
+      if (window.lenis) window.lenis.start();
     };
-  }, [totalCards]);
+  }, [activeIndex, totalCards]);
+
+  const getCardStyle = (idx) => {
+    const diff = idx - activeIndex;
+
+    if (diff < 0) {
+      return {
+        transform: 'translate3d(0, -60px, 0) scale(0.95)',
+        opacity: 0,
+        zIndex: 10 + idx,
+        pointerEvents: 'none',
+      };
+    } else if (diff === 0) {
+      return {
+        transform: 'translate3d(0, 0, 0) scale(1)',
+        opacity: 1,
+        zIndex: 30,
+        pointerEvents: 'auto',
+      };
+    } else if (diff === 1) {
+      return {
+        transform: 'translate3d(0, 14px, 0) scale(0.96)',
+        opacity: 0.35,
+        zIndex: 20,
+        pointerEvents: 'none',
+      };
+    } else {
+      return {
+        transform: 'translate3d(0, 28px, 0) scale(0.92)',
+        opacity: 0,
+        zIndex: 10,
+        pointerEvents: 'none',
+      };
+    }
+  };
 
   return (
-    <section ref={targetRef} className="w-full px-6 relative z-10 bg-white" style={{ height: '450vh' }}>
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
-        {/* Subtle background glow to add premium aesthetic */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ECFFF6]/40 blur-[130px] rounded-full pointer-events-none z-0"></div>
+    <section ref={targetRef} className="w-full px-6 relative z-10 bg-white h-screen flex flex-col justify-center items-center overflow-hidden">
+      {/* Subtle background glow to add premium aesthetic */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ECFFF6]/40 blur-[130px] rounded-full pointer-events-none z-0"></div>
 
-        <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 w-full mb-6 md:mb-10">
+      <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 w-full mb-6 md:mb-10">
 
-          {/* Section Badge */}
-          <AnimatedSection delay={0}>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#1F8255] bg-[#ECFFF6] border border-[#1F8255]/15 rounded-full">
-              <span className="w-1 h-1 rounded-full bg-[#1F8255]"></span>
-              The Reality of Scale
-            </div>
-          </AnimatedSection>
-
-          {/* Section Heading with smaller, elegant typography */}
-          <AnimatedSection delay={50}>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-forest leading-tight tracking-tight mb-3 max-w-3xl">
-              Why Scaling with AI & Automation is <span className="text-emerald">Harder Than It Looks</span>
-            </h2>
-          </AnimatedSection>
-
-          {/* Subtitle with smaller, elegant typography */}
-          <AnimatedSection delay={100}>
-            <p className="text-[13px] md:text-sm text-forest/70 font-medium leading-relaxed max-w-2xl">
-              As organisations scale, processes that once operated smoothly begin to stretch under increased demand. Manual efforts grow, complexity deepens, and what was once efficient becomes a bottleneck.
-            </p>
-          </AnimatedSection>
-
-        </div>
-
-        {/* Interactive Redesigned Cards Sticky Scroll */}
-        <div className="w-full overflow-hidden relative py-4">
-          <motion.div
-            ref={trackRef}
-            className="flex gap-6 px-8 md:px-16"
-            style={{ x }}
-          >
-            {painPoints.map((point, idx) => (
-              <div
-                key={idx}
-                className="w-[280px] sm:w-[320px] md:w-[360px] shrink-0"
-              >
-                <div className="relative overflow-hidden w-full p-6 md:p-8 rounded-2xl bg-linear-to-b from-[#fbfdfc] to-[#f7fcf9] border border-[#074026]/6 hover:border-emerald/20 transition-all duration-300 group hover:shadow-[0_12px_24px_rgba(7,64,38,0.02)] flex flex-col justify-between min-h-[220px]">
-                  {/* Subtle card-specific radial gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-bloom),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-
-                  {/* Card Number */}
-                  <div className="absolute top-4 right-5 text-lg md:text-xl font-heading font-black text-forest/8 group-hover:text-emerald/15 transition-colors duration-300">
-                    {`0${idx + 1}`}
-                  </div>
-
-                  {/* Content Container */}
-                  <div className="relative z-10 flex flex-col h-full justify-between">
-                    <div>
-                      {/* Icon */}
-                      <div className="w-9 h-9 rounded-lg bg-forest/5 flex items-center justify-center text-forest group-hover:bg-emerald group-hover:text-white transition-all duration-300 mb-4">
-                        {point.icon}
-                      </div>
-
-                      {/* Card Title */}
-                      <h3 className="text-base md:text-[17px] font-heading font-bold text-forest mb-2 transition-colors duration-200 group-hover:text-emerald">
-                        {point.title}
-                      </h3>
-                    </div>
-
-                    {/* Card Description */}
-                    <p className="text-[12px] md:text-[13px] text-forest/65 font-medium leading-relaxed pr-2 mt-2">
-                      {point.desc}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="w-full flex justify-center mt-8">
-          <div className="w-32 md:w-48 h-0.5 bg-forest/10 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-emerald rounded-full"
-              style={{ width: progressWidth }}
-            ></motion.div>
+        {/* Section Badge */}
+        <AnimatedSection delay={0}>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#1F8255] bg-[#ECFFF6] border border-[#1F8255]/15 rounded-full">
+            <span className="w-1 h-1 rounded-full bg-[#1F8255]"></span>
+            The Reality of Scale
           </div>
-        </div>
+        </AnimatedSection>
+
+        {/* Section Heading with smaller, elegant typography */}
+        <AnimatedSection delay={50}>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-forest leading-tight tracking-tight mb-3 max-w-3xl">
+            Why Scaling with AI & Automation is <span className="text-emerald">Harder Than It Looks</span>
+          </h2>
+        </AnimatedSection>
+
+        {/* Subtitle with smaller, elegant typography */}
+        <AnimatedSection delay={100}>
+          <p className="text-[13px] md:text-sm text-forest/70 font-medium leading-relaxed max-w-2xl">
+            As organisations scale, processes that once operated smoothly begin to stretch under increased demand. Manual efforts grow, complexity deepens, and what was once efficient becomes a bottleneck.
+          </p>
+        </AnimatedSection>
 
       </div>
+
+      {/* Interactive Redesigned Cards Sticky Scroll - Stacking Deck */}
+      <div className="w-full max-w-2xl mx-auto relative h-[280px] md:h-[260px] z-10">
+        {painPoints.map((point, idx) => (
+          <div
+            key={idx}
+            className="absolute inset-x-0 top-0 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={getCardStyle(idx)}
+          >
+            <div className="relative overflow-hidden w-full p-6 md:p-8 rounded-2xl bg-linear-to-b from-[#fbfdfc] to-[#f7fcf9] border border-[#074026]/6 hover:border-emerald/20 transition-all duration-300 group hover:shadow-[0_12px_24px_rgba(7,64,38,0.02)] flex flex-col justify-between min-h-[220px]">
+              {/* Subtle card-specific radial gradient overlay on hover */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-bloom),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+              {/* Card Number */}
+              <div className="absolute top-4 right-5 text-lg md:text-xl font-heading font-black text-forest/8 group-hover:text-emerald/15 transition-colors duration-300">
+                {`0${idx + 1}`}
+              </div>
+
+              {/* Content Container */}
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div>
+                  {/* Icon */}
+                  <div className="w-9 h-9 rounded-lg bg-forest/5 flex items-center justify-center text-forest group-hover:bg-emerald group-hover:text-white transition-all duration-300 mb-4">
+                    {point.icon}
+                  </div>
+
+                  {/* Card Title */}
+                  <h3 className="text-base md:text-[17px] font-heading font-bold text-forest mb-2 transition-colors duration-200 group-hover:text-emerald">
+                    {point.title}
+                  </h3>
+                </div>
+
+                {/* Card Description */}
+                <p className="text-[12px] md:text-[13px] text-forest/65 font-medium leading-relaxed pr-2 mt-2">
+                  {point.desc}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Progress Indicator */}
+      <div className="w-full flex justify-center mt-8">
+        <div className="w-32 md:w-48 h-0.5 bg-forest/10 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-emerald rounded-full transition-all duration-150 ease-out"
+            style={{ width: `${scrollProgress * 100}%` }}
+          ></div>
+        </div>
+      </div>
+
     </section>
   );
 }
