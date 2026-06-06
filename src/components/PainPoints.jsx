@@ -20,10 +20,9 @@ export default function PainPoints() {
       desc: "Speed without safeguards is a liability. Rapid AI adoption without compliance, data governance, and security frameworks exposes your business to regulatory and operational risk."
     }
   ];
-
   return (
-    <section className="w-full bg-bloom py-24 md:py-32 px-6 border-t border-forest/5">
-      <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+    <section className="w-full py-24 md:py-32 px-6 relative z-10 overflow-hidden">
+      <div className="max-w-4xl mx-auto flex flex-col items-center text-center relative z-10">
 
         <AnimatedSection delay={0}>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold text-forest leading-[1.1] tracking-tight mb-6 max-w-4xl">

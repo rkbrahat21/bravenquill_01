@@ -6,3 +6,4 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
 })
+// Force Vite restart to pick up framer-motion
