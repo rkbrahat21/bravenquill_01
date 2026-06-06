@@ -23,7 +23,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`w-full h-18 z-50 transition-all duration-500 ease-out p-2 bg-transparent`}>
+      <nav className={`absolute w-full h-18 z-50 transition-all duration-500 ease-out p-2 bg-transparent`}>
         <div className="max-w-full mx-auto px-6 md:px-12 h-full flex items-center justify-between">
 
           {/* Left: Logo + Text */}

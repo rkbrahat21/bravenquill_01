@@ -22,12 +22,12 @@ export default function Services() {
   ];
 
   return (
-    <section className="w-full bg-white px-6" id="services">
+    <section className="w-full bg-white py-12 px-6" id="services">
       <div className="max-w-300 mx-auto flex flex-col md:flex-row gap-16 md:gap-24">
 
         {/* Left: Sticky Header */}
         <div className="w-full md:w-1/3">
-          <div className="sticky top-32 flex flex-col items-start">
+          <div className="sticky top-32 bottom-32 flex flex-col items-start">
             <AnimatedSection delay={0}>
               <h2 className="text-3xl md:text-4xl font-heading font-extrabold text-forest leading-[1.1] tracking-tight mb-6">
                 Real capabilities that have saved clients 260+ hours and unlocked six-figure revenue.
