@@ -8,7 +8,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 150);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -24,12 +24,11 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`w-full h-18 z-50 transition-all duration-500 ease-out fixed top-0 left-0 ${isScrolled
-          ? 'bg-white/85 backdrop-blur-lg shadow-sm border-forest/10'
+        className={`z-50 transition-all duration-500 ease-out p-2 fixed w-[98%] mt-4 ml-4 mr-4 rounded-full ${isScrolled
+          ? 'bg-bloom/60 backdrop-blur-lg shadow-sm border-forest/10'
           : 'bg-transparent'
-          }`}
-      >
-        <div className="max-w-6xl mx-auto px-6 md:px-12 h-full flex items-center justify-between">
+          }`}>
+        <div className="max-w-full mx-auto px-6 md:px-12 h-full flex items-center justify-between">
 
           {/* Left: Logo + Text */}
           <Link to="/" className="flex items-center gap-3 group cursor-pointer z-50">
