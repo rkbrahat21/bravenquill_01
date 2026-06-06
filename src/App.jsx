@@ -25,14 +25,17 @@ export default function App() {
 
     requestAnimationFrame(raf);
 
+    window.lenis = lenis;
+
     return () => {
       lenis.destroy();
+      window.lenis = null;
     };
   }, []);
 
   return (
     <Router>
-      <div className="min-h-screen text-black bg-white font-ui selection:bg-emerald/30 selection:text-forest overflow-x-hidden flex flex-col justify-between">
+      <div className="min-h-screen text-black bg-white font-ui selection:bg-emerald/30 selection:text-forest flex flex-col justify-between">
         <div className="w-full grow flex flex-col">
           {/* 1. Navbar */}
           <Navbar />

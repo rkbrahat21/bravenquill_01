@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import AnimatedSection from './AnimatedSection';
 
 export default function PainPoints() {
@@ -45,96 +46,152 @@ export default function PainPoints() {
     }
   ];
 
-  const carouselRef = useRef(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [showControls, setShowControls] = useState(false);
+  const targetRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef
+  });
 
-  const checkScrollable = () => {
-    if (carouselRef.current) {
-      const { scrollWidth, clientWidth } = carouselRef.current;
-      setShowControls(scrollWidth > clientWidth);
-    }
-  };
-
-  const handleScroll = () => {
-    if (carouselRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-      const totalScrollable = scrollWidth - clientWidth;
-      if (totalScrollable > 0) {
-        setScrollProgress(scrollLeft / totalScrollable);
-      }
-    }
-  };
-
-  const scroll = (direction) => {
-    if (carouselRef.current) {
-      const { clientWidth } = carouselRef.current;
-      const offset = direction === 'left' ? -clientWidth * 0.75 : clientWidth * 0.75;
-      carouselRef.current.scrollBy({ left: offset, behavior: 'smooth' });
-    }
-  };
+  const [maxSlide, setMaxSlide] = useState(0);
+  const trackRef = useRef(null);
 
   useEffect(() => {
-    checkScrollable();
-    window.addEventListener('resize', checkScrollable);
-    
-    const timer = setTimeout(checkScrollable, 200);
+    const calculateSlide = () => {
+      if (trackRef.current) {
+        const scrollWidth = trackRef.current.scrollWidth;
+        const clientWidth = window.innerWidth;
+        setMaxSlide(Math.max(0, scrollWidth - clientWidth));
+      }
+    };
+
+    calculateSlide();
+    window.addEventListener('resize', calculateSlide);
+    const timer = setTimeout(calculateSlide, 200);
 
     return () => {
-      window.removeEventListener('resize', checkScrollable);
+      window.removeEventListener('resize', calculateSlide);
       clearTimeout(timer);
     };
-  }, []);
+  }, [painPoints.length]);
+
+  const totalCards = painPoints.length;
+  const x = useTransform(scrollYProgress, [0, 1], [0, -maxSlide]);
+  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  const cardIndexRef = useRef(0);
+  const isTransitioningRef = useRef(false);
+
+  // Sync scroll position changes from regular scrolls to keep the index updated
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      if (!isTransitioningRef.current) {
+        const index = Math.round(latest * (totalCards - 1));
+        cardIndexRef.current = index;
+      }
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, totalCards]);
+
+  useEffect(() => {
+    const el = targetRef.current;
+    if (!el) return;
+
+    const handleWheel = (e) => {
+      const rect = el.getBoundingClientRect();
+      // Section is pinned if top is near top of screen and bottom is near bottom of screen
+      const isPinned = rect.top <= 5 && rect.bottom >= window.innerHeight - 5;
+
+      if (!isPinned) return;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      const nextIndex = cardIndexRef.current + direction;
+
+      // Allow natural scroll to proceed past the ends
+      if (nextIndex < 0 || nextIndex >= totalCards) {
+        return;
+      }
+
+      // Intercept the scroll event
+      e.preventDefault();
+
+      if (isTransitioningRef.current) return;
+      isTransitioningRef.current = true;
+      cardIndexRef.current = nextIndex;
+
+      const offsetTop = el.offsetTop;
+      const viewportHeight = window.innerHeight;
+      const totalScrollable = (4.5 - 1) * viewportHeight;
+      const targetScroll = offsetTop + (nextIndex / (totalCards - 1)) * totalScrollable;
+
+      if (window.lenis) {
+        window.lenis.scrollTo(targetScroll, {
+          duration: 0.95,
+          immediate: false,
+          force: true,
+          onComplete: () => {
+            setTimeout(() => {
+              isTransitioningRef.current = false;
+            }, 150);
+          }
+        });
+      } else {
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+        setTimeout(() => {
+          isTransitioningRef.current = false;
+        }, 850);
+      }
+    };
+
+    el.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', handleWheel);
+    };
+  }, [totalCards]);
 
   return (
-    <section className="w-full px-6 relative z-10 overflow-hidden bg-white">
-      {/* Subtle background glow to add premium aesthetic */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ECFFF6]/40 blur-[130px] rounded-full pointer-events-none z-0"></div>
+    <section ref={targetRef} className="w-full px-6 relative z-10 bg-white" style={{ height: '450vh' }}>
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
+        {/* Subtle background glow to add premium aesthetic */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-[#ECFFF6]/40 blur-[130px] rounded-full pointer-events-none z-0"></div>
 
-      <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10">
+        <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10 w-full mb-6 md:mb-10">
 
-        {/* Section Badge */}
-        <AnimatedSection delay={0}>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-4 text-[10px] font-bold uppercase tracking-widest text-[#1F8255] bg-[#ECFFF6] border border-[#1F8255]/15 rounded-full">
-            <span className="w-1 h-1 rounded-full bg-[#1F8255]"></span>
-            The Reality of Scale
-          </div>
-        </AnimatedSection>
+          {/* Section Badge */}
+          <AnimatedSection delay={0}>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 mb-3 text-[10px] font-bold uppercase tracking-widest text-[#1F8255] bg-[#ECFFF6] border border-[#1F8255]/15 rounded-full">
+              <span className="w-1 h-1 rounded-full bg-[#1F8255]"></span>
+              The Reality of Scale
+            </div>
+          </AnimatedSection>
 
-        {/* Section Heading with smaller, elegant typography */}
-        <AnimatedSection delay={50}>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-forest leading-tight tracking-tight mb-4 max-w-3xl">
-            Why Scaling with AI & Automation is <span className="text-emerald">Harder Than It Looks</span>
-          </h2>
-        </AnimatedSection>
+          {/* Section Heading with smaller, elegant typography */}
+          <AnimatedSection delay={50}>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-forest leading-tight tracking-tight mb-3 max-w-3xl">
+              Why Scaling with AI & Automation is <span className="text-emerald">Harder Than It Looks</span>
+            </h2>
+          </AnimatedSection>
 
-        {/* Subtitle with smaller, elegant typography */}
-        <AnimatedSection delay={100}>
-          <p className="text-[13px] md:text-sm text-forest/70 font-medium leading-relaxed max-w-2xl mb-12">
-            As organisations scale, processes that once operated smoothly begin to stretch under increased demand. Manual efforts grow, complexity deepens, and what was once efficient becomes a bottleneck.
-          </p>
-        </AnimatedSection>
+          {/* Subtitle with smaller, elegant typography */}
+          <AnimatedSection delay={100}>
+            <p className="text-[13px] md:text-sm text-forest/70 font-medium leading-relaxed max-w-2xl">
+              As organisations scale, processes that once operated smoothly begin to stretch under increased demand. Manual efforts grow, complexity deepens, and what was once efficient becomes a bottleneck.
+            </p>
+          </AnimatedSection>
 
-        {/* Interactive Redesigned Cards Carousel */}
-        <div className="w-full relative">
-          <div
-            ref={carouselRef}
-            onScroll={handleScroll}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-none w-full text-left pb-6 px-1"
-            style={{
-              scrollBehavior: 'smooth',
-              WebkitOverflowScrolling: 'touch',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}
+        </div>
+
+        {/* Interactive Redesigned Cards Sticky Scroll */}
+        <div className="w-full overflow-hidden relative py-4">
+          <motion.div
+            ref={trackRef}
+            className="flex gap-6 px-8 md:px-16"
+            style={{ x }}
           >
             {painPoints.map((point, idx) => (
-              <AnimatedSection
+              <div
                 key={idx}
-                delay={150 + (idx * 80)}
-                className="snap-start shrink-0 w-[85vw] sm:w-[48vw] md:w-[360px] max-w-full"
+                className="w-[280px] sm:w-[320px] md:w-[360px] shrink-0"
               >
-                <div className="relative overflow-hidden h-full min-h-[220px] p-6 md:p-7 rounded-2xl bg-linear-to-b from-[#fbfdfc] to-[#f7fcf9] border border-[#074026]/6 hover:border-emerald/20 transition-all duration-300 group hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(7,64,38,0.02)] flex flex-col justify-between">
+                <div className="relative overflow-hidden w-full p-6 md:p-8 rounded-2xl bg-linear-to-b from-[#fbfdfc] to-[#f7fcf9] border border-[#074026]/6 hover:border-emerald/20 transition-all duration-300 group hover:shadow-[0_12px_24px_rgba(7,64,38,0.02)] flex flex-col justify-between min-h-[220px]">
                   {/* Subtle card-specific radial gradient overlay on hover */}
                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-bloom),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
@@ -143,7 +200,7 @@ export default function PainPoints() {
                     {`0${idx + 1}`}
                   </div>
 
-                  {/* Content Container (relative for overlay layering) */}
+                  {/* Content Container */}
                   <div className="relative z-10 flex flex-col h-full justify-between">
                     <div>
                       {/* Icon */}
@@ -163,45 +220,20 @@ export default function PainPoints() {
                     </p>
                   </div>
                 </div>
-              </AnimatedSection>
+              </div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
-        {/* Carousel Controls */}
-        {showControls && (
-          <div className="flex items-center justify-between w-full mt-4 max-w-5xl px-2">
-            {/* Progress Bar Track */}
-            <div className="w-32 md:w-48 h-0.5 bg-forest/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-emerald rounded-full transition-all duration-300 ease-out"
-                style={{ width: `${scrollProgress * 100}%` }}
-              ></div>
-            </div>
-
-            {/* Navigation Buttons */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => scroll('left')}
-                className="w-9 h-9 rounded-full border border-forest/10 flex items-center justify-center text-forest bg-white/70 hover:bg-emerald hover:text-white hover:border-emerald transition-all duration-300 cursor-pointer"
-                aria-label="Scroll left"
-              >
-                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                onClick={() => scroll('right')}
-                className="w-9 h-9 rounded-full border border-forest/10 flex items-center justify-center text-forest bg-white/70 hover:bg-emerald hover:text-white hover:border-emerald transition-all duration-300 cursor-pointer"
-                aria-label="Scroll right"
-              >
-                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
+        {/* Progress Indicator */}
+        <div className="w-full flex justify-center mt-8">
+          <div className="w-32 md:w-48 h-0.5 bg-forest/10 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-emerald rounded-full"
+              style={{ width: progressWidth }}
+            ></motion.div>
           </div>
-        )}
+        </div>
 
       </div>
     </section>
