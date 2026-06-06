@@ -10,7 +10,7 @@ import n8nLogo from '../assets/images/n8n.svg';
 export default function Hero() {
   return (
     <section
-      className="w-full text-forest pt-20 md:32 pb-4 relative overflow-hidden flex flex-col items-center justify-center min-h-screen bg-[#fafafa]"
+      className="w-full text-forest pt-10 md:pt-16 pb-4 relative overflow-hidden flex flex-col items-center justify-center min-h-screen bg-[#fafafa]"
     >
       {/* Aurora Sequence-Style Vertical Stripes Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-80 top-0 left-0">
